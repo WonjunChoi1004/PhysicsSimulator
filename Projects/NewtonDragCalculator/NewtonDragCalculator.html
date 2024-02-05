@@ -199,23 +199,24 @@
                 if (totalDistance.finished == 1) {
                 totalDistance.x += Math.abs(ball.vel.x * timeSplit);
                 }
-            }
 
-            //make browser to call us repeatedly ------------
-
-            function update() {
                 document.getElementById("Density").innerHTML = airdrag.density;
                 document.getElementById("Coefficient").innerHTML = airdrag.coefficient;
                 document.getElementById("Area").innerHTML = Math.round((ball.radius * 2 * Math.PI) * 100) / 100;
                 document.getElementById("Distance").innerHTML = Math.round(totalDistance.x * 100) /100
                 document.getElementById("VelocityX").innerHTML = Math.round(ball.vel.x * 100) /100;
                 document.getElementById("VelocityY").innerHTML = Math.round(ball.vel.y * 100) /100;
+            }
+
+            //make browser to call us repeatedly ------------
+
+            function update() {
                 if (paused) {
                     init();
                     return;
                 }
-                    simulate();
-                    draw();
+                simulate();
+                draw();
                 requestAnimationFrame(update);
             }
 
@@ -236,6 +237,14 @@
                 totalDistance.x = 0;
                 totalDistance.y = 0;
                 totalDistance.finished = 1;
+
+                document.getElementById("Density").innerHTML = airdrag.density;
+                document.getElementById("Coefficient").innerHTML = airdrag.coefficient;
+                document.getElementById("Area").innerHTML = Math.round((ball.radius * 2 * Math.PI) * 100) / 100;
+                document.getElementById("Distance").innerHTML = Math.round(totalDistance.x * 100) /100
+                document.getElementById("VelocityX").innerHTML = Math.round(ball.vel.x * 100) /100;
+                document.getElementById("VelocityY").innerHTML = Math.round(ball.vel.y * 100) /100;
+
                 c.clearRect(0, 0, canvas.width, canvas.height);
 
                 c.fillStyle = "#FF0000";
