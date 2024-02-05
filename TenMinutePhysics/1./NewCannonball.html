@@ -17,7 +17,7 @@
             var canvas = document.getElementById("myCanvas");
             var c = canvas.getContext("2d");
             canvas.width = window.innerWidth - 20;
-            canvas.height = window.innerHeight - 0;
+            canvas.height = window.innerHeight - 100;
 
             var simMinWidth = 20.0;
             var cScale = Math.min(canvas.width, canvas.height) / simMinWidth;
@@ -37,17 +37,31 @@
 
             //Scene setup -------
 
+            var gravity = {
+                x : 0,
+                y : -10
+            }
+
+            var timeStep = 1.0 / 120;
+
+
             var ball = {
                 radius : 0.2,
-                pos : {x : 0.2, y : 0.2}
+                pos : {x : 0.2, y : 0.2},
+                velocity : {x : 10, y : 10},
+
+                e : 0.75
             }
 
             var stick = {
-                length : 10.0,
+                length : 5.0,
                 pos1 : {x : 10, y :10},
-                pos2 : {x : 10, y : 1},
+                pos2 : {x : 6.5, y : 10},
+                velocity : {x : 5.0, y : 0.0},
 
-                radius : 1.0
+                e : 0.75,
+
+                radius : .5
             }
 
 
@@ -68,16 +82,38 @@
                 c.arc(
                     cX(ball.pos), cY(ball.pos), cScale * ball.radius, 0.0, 2.0 * Math.PI
                 )
-                c.fillStyle = "#FF0000";
 
-
-                //Stick
-                c.fillStyle = "#AAAA00";
-
-                c.arc(cX(stick.pos1), cY(stick.pos1), stick.radius * cScale, 0, 2 * Math.PI);
-                c.resetTransform();
                 c.closePath();
                 c.fill();
+
+                c.beginPath();
+                //Stick body
+                c.fillStyle = "#AA0000";
+                c.fillRect(cX(stick.pos2), cY(stick.pos2), stick.length * cScale, cScale*stick.radius * 2)
+                c.closePath();
+                c.fill();
+
+
+                c.beginPath();
+                //Stick head
+                c.fillStyle = "#AA0000";
+                var Newpos1 = {
+                    x : stick.pos1.x  +  3* stick.radius,
+                    y : stick.pos1.y - stick.radius
+                }
+                var Newpos2 = {
+                    x : stick.pos2.x,
+                    y : stick.pos2.y -stick.radius
+                }
+
+                c.arc(cX(Newpos1), cY(Newpos1), stick.radius * cScale, 0.0, 2*Math.PI);
+                c.arc(cX(Newpos2), cY(Newpos2), stick.radius * cScale, 0.0, 2*Math.PI);
+
+                c.closePath();
+                c.fill();
+
+
+                
             }
 
 
@@ -89,6 +125,38 @@
 
             function simulate() {
 
+                ball.velocity.x += gravity.x * timeStep;
+                ball.velocity.y += gravity.y * timeStep;
+
+                ball.pos.x += ball.velocity.x * timeStep;
+                ball.pos.y += ball.velocity.y * timeStep;
+
+
+                if (ball.pos.x <= ball.radius || ball.pos.x >= simWidth) {
+                    ball.velocity.x = - ball.e *ball.velocity.x;
+                }
+                if (ball.pos.y <= ball.radius || ball.pos.y >= simHeight) {
+                    ball.velocity.y = -ball.e * ball.velocity.y;
+                }
+
+                stick.velocity.x += gravity.x * timeStep;
+                stick.velocity.y += gravity.y * timeStep;
+
+                stick.pos1.x += stick.velocity.x * timeStep;
+                stick.pos1.y += stick.velocity.y * timeStep;
+                stick.pos2.x += stick.velocity.x * timeStep;
+                stick.pos2.y += stick.velocity.y * timeStep;
+
+
+                if (stick.pos2.x <= stick.radius || stick.pos1.x + 3* stick.radius >= simWidth) {
+                    stick.velocity.x = - stick.e * stick.velocity.x;
+                }
+                if (stick.pos1.y <= stick.radius || stick.pos1.y >= simHeight) {
+                    stick.velocity.y = - stick.e * stick.velocity.y;
+                }
+
+
+                
             }
 
 
