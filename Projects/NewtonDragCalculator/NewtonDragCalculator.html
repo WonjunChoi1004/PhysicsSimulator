@@ -41,7 +41,7 @@
         Cross sectional area : <span style = "color:blue; font-weight:bold" id = "Area">0</span> <span style="color: blue; font-weight: bold">m^2</span>
 
         <br>
-        Total Distance Traveled horizontally : <span style = "color:blue; font-weight:bold" id = "Density">0</span> <span style="color: blue; font-weight: bold">m</span>
+        Total Distance Traveled horizontally : <span style = "color:blue; font-weight:bold" id = "Distance">0</span> <span style="color: blue; font-weight: bold">m</span>
         <br>
 
 
@@ -107,7 +107,12 @@
 
             var ball = {
                 radius : 0.5,
-                pos : {x : 0, y : 0},
+                pos : {x : function() {
+                        return this.radius + 0.5
+                    }, y : function() {
+                        return this.radius
+                    }
+                    },
                 vel : {x :  ballvel.x, y : ballvel.y},
                 area : function() {
                     return 2.0 * Math.PI * this.radius;
@@ -156,18 +161,28 @@
                     ball.pos.x = simWidth - ball.radius;
                     ball.vel.x = -ball.vel.x;
                 }
-                if (ball.pos.y < 0) {
+                if (ball.pos.y < ball.radius) {
                     ball.pos.y = ball.radius;
                     ball.vel.y = 0;
                     ball.vel.x = 0;
+                    totalDistance.finished = 0;
                     end();
                 }
-                
+
+                //Total distance calculated
+
+                if (totalDistance.finished = 1) {
+                totalDistance.x += Math.abs(ball.vel.x * timeSplit);
+                }
+
 
 
                 document.getElementById("Density").innerHTML = airdrag.density;
                 document.getElementById("Coefficient").innerHTML = airdrag.coefficient;
-                document.getElementById("Area").innerHTML = Math.round((ball.radius * 2 * Math.PI) *100) / 100;
+                document.getElementById("Area").innerHTML = Math.round((ball.radius * 2 * Math.PI) * 100) / 100;
+
+                document.getElementById("Distance").innerHTML = Math.round(totalDistance.x * 100) /100
+
             }
 
             //make browser to call us repeatedly ------------
@@ -182,25 +197,12 @@
                 update();
             }
             function restart() {
-                ball.pos.x = 0;
-                ball.pos.y = 0;
-                ball.vel.x = ballvel.x;
-                ball.vel.y = ballvel.y;
-                c.clearRect(0, 0, canvas.width, canvas.height);
-
-                c.fillStyle = "#FF0000";
-
-                c.beginPath();
-                c.arc(
-                    cX(ball.pos), cY(ball.pos), cScale * ball.radius, 0.0, 2.0 * Math.PI
-                )
-                c.closePath();
-                c.fill();
+                init();
             }
 
             function init() {
-                ball.pos.x = 0;
-                ball.pos.y = 0;
+                ball.pos.x = ball.radius;
+                ball.pos.y = ball.radius
                 ball.vel.x = ballvel.x;
                 ball.vel.y = ballvel.y;
                 c.clearRect(0, 0, canvas.width, canvas.height);
