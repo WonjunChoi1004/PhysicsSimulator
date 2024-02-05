@@ -20,6 +20,8 @@
         <br>
 
         <!--Input density and Drag coefficient-->
+        <!--Velocity : Between 0 to 40-->
+        <!--Density : Between 0 to 5 kg /m^3-->
 
         Velocity: <input type = "range" min = "0" max = "40" value = "20" id = "velocity" class = "slider">
         Angle: <input type = "range" min = "0" max = "90" value = "45" id = "angle" class = "slider">
@@ -28,7 +30,7 @@
         Density :<input type = "range" min = "0" max = "100" value = "0" id = "density" class = "slider"> 
         <br>
 
-        Drag coefficient :<input type = "range" min = "0" max = "100" value = "0" id = "coefficient" class = "slider">
+        Drag coefficient :<input type = "range" min = "0" max = "5" value = "0" id = "coefficient" class = "slider">
 
 
         
@@ -52,7 +54,10 @@
         Cross sectional area : <span style = "color:blue; font-weight:bold" id = "Area">0</span> <span style="color: blue; font-weight: bold">m^2</span>
 
         <br>
-        Total Distance Traveled horizontally : <span style = "color:blue; font-weight:bold" id = "Distance">0</span> <span style="color: blue; font-weight: bold">m</span>
+        Air Drag : <span style = "color:blue; font-weight:bold" id = "airDrag">0</span><span style="color: blue; font-weight: bold">N</span>
+
+        <br>
+        Total Distance Traveled horizontally : <span style = "color:blue; font-weight:bold" id = "Distance"></span> <span style="color: blue; font-weight: bold">m</span>
         <br>
 
 
@@ -100,9 +105,8 @@
             //1/2 * (Density) * (velocity) ^2 * (Drag Coefficient) * Area
 
             var airdrag = {
-                density : 0,
-                coefficient : 0,
-                
+                density : 1.0,
+                coefficient : 0.1
             }
 
             var totalDistance = {
@@ -123,7 +127,7 @@
             
 
             var ball = {
-                radius : 0.5,
+                radius : 0.2,
                 pos : {x : function() {
                         return this.radius + 0.5
                     }, y : function() {
@@ -157,7 +161,7 @@
                 airdrag.density = this.value;
             }
             document.getElementById("coefficient").oninput = function() {
-                airdrag.coefficient = this.value;
+                airdrag.coefficient = this.value / 100;
             }
             document.getElementById("velocity").oninput = function() {
                 ballvel.polar.r = this.value;
@@ -174,8 +178,13 @@
 
             function simulate() {
 
-                ball.vel.x += gravity.x * timeSplit;
-                ball.vel.y += gravity.y * timeSplit;
+                var airDragForce = 1/2 * airdrag.coefficient 
+                * airdrag.density * (ball.radius * 2 * Math.PI) * (ball.vel.x * ball.vel.x + ball.vel.y  * ball.vel.y) ;
+                
+                var hypo = Math.hypot(ball.vel.x, ball.vel.y);
+                //Calculate the 
+                ball.vel.x += (gravity.x - airDragForce * (ball.vel.x / hypo)) * timeSplit;
+                ball.vel.y += (gravity.y - airDragForce * (ball.vel.y / hypo)) * timeSplit;
 
                 ball.pos.x += ball.vel.x * timeSplit;
                 ball.pos.y += ball.vel.y * timeSplit;
@@ -238,12 +247,17 @@
                 totalDistance.y = 0;
                 totalDistance.finished = 1;
 
+                var airDragForce = 1/2 * airdrag.coefficient 
+                * airdrag.density * (ball.radius * 2 * Math.PI) * (ball.vel.x * ball.vel.x + ball.vel.y  * ball.vel.y) ;
+
                 document.getElementById("Density").innerHTML = airdrag.density;
                 document.getElementById("Coefficient").innerHTML = airdrag.coefficient;
                 document.getElementById("Area").innerHTML = Math.round((ball.radius * 2 * Math.PI) * 100) / 100;
                 document.getElementById("Distance").innerHTML = Math.round(totalDistance.x * 100) /100
                 document.getElementById("VelocityX").innerHTML = Math.round(ball.vel.x * 100) /100;
                 document.getElementById("VelocityY").innerHTML = Math.round(ball.vel.y * 100) /100;
+                document.getElementById("airDrag").innerHTML = Math.round(airDragForce * 100) / 100;
+
 
                 c.clearRect(0, 0, canvas.width, canvas.height);
 
