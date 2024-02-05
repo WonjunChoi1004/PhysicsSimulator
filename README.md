@@ -1,7 +1,9 @@
 # **Physics Project**
 Created on Febrary 4th
 
-<>
+<p align ="center">
+  <img src="/assets/Screenshot%202024-02-05%20at%202.02.01%20AM.png">
+</p>
 
 
 ## Aim
