@@ -11,6 +11,8 @@ For the Science project due in 2 month
 4. Write the code for the fluid simulation
 5. Finish the project document
 
+This is the [Schedule](#schedule)
+
 
 ## Schedule
 
