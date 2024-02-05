@@ -18,12 +18,18 @@
         </button>
 
         <br>
+
         <!--Input density and Drag coefficient-->
 
+        Velocity: <input type = "range" min = "0" max = "40" value = "0" id = "velocity" class = "slider">
+        Angle: <input type = "range" min = "0" max = "90" value = "0" id = "angle" class = "slider">
+
+        <br>
         Density :<input type = "range" min = "0" max = "100" value = "0" id = "density" class = "slider"> 
         <br>
 
         Drag coefficient :<input type = "range" min = "0" max = "100" value = "0" id = "coefficient" class = "slider">
+
 
         
         <canvas id = "myCanvas" style = "border: 2px solid" ></canvas>
@@ -90,6 +96,7 @@
             var airdrag = {
                 density : 0,
                 coefficient : 0,
+                
             }
 
             var totalDistance = {
@@ -116,7 +123,9 @@
                 vel : {x :  ballvel.x, y : ballvel.y},
                 area : function() {
                     return 2.0 * Math.PI * this.radius;
-                }
+                },
+                angle : 0,
+                totvel : 0
             };
 
 
@@ -201,10 +210,16 @@
             }
 
             function init() {
+                document.getElementById("density").oninput = function() {
+                airdrag.density = this.value;
+            }
                 ball.pos.x = ball.radius;
                 ball.pos.y = ball.radius
                 ball.vel.x = ballvel.x;
                 ball.vel.y = ballvel.y;
+                totalDistance.x = 0;
+                totalDistance.y = 0;
+                totalDistance.finished = 1;
                 c.clearRect(0, 0, canvas.width, canvas.height);
 
                 c.fillStyle = "#FF0000";
