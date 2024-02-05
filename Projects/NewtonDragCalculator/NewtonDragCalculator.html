@@ -30,7 +30,7 @@
         Density :<input type = "range" min = "0" max = "100" value = "0" id = "density" class = "slider"> 
         <br>
 
-        Drag coefficient :<input type = "range" min = "0" max = "5" value = "0" id = "coefficient" class = "slider">
+        Drag coefficient :<input type = "range" min = "0" max = "100" value = "0" id = "coefficient" class = "slider">
 
 
         
@@ -44,10 +44,10 @@
         
         <br>
 
-        Density of the Air : <span style = "color:blue; font-weight:bold" id = "Density">50</span> <span style="color: blue; font-weight: bold">g/m^3</span>
+        Density of the Air : <span style = "color:blue; font-weight:bold" id = "Density">0</span> <span style="color: blue; font-weight: bold">g/m^3</span>
         <br>
 
-        Drag Coefficient : <span style = "color:blue; font-weight:bold" id = "Coefficient">50</span>
+        Drag Coefficient : <span style = "color:blue; font-weight:bold" id = "Coefficient">0</span>
 
         <br>
 
@@ -158,7 +158,7 @@
             }
             //
             document.getElementById("density").oninput = function() {
-                airdrag.density = this.value /20;
+                airdrag.density = this.value / 20;
             }
             document.getElementById("coefficient").oninput = function() {
                 airdrag.coefficient = this.value / 100;
