@@ -51,7 +51,7 @@
 
         <br>
 
-        Cross sectional area : <span style = "color:blue; font-weight:bold" id = "Area">0</span> <span style="color: blue; font-weight: bold">m^2</span>
+        Angle : <span style = "color:blue; font-weight:bold" id = "Angle">45</span> <span style="color: blue; font-weight: bold">degrees</span>
 
         <br>
         Air Drag : <span style = "color:blue; font-weight:bold" id = "airDrag">0</span><span style="color: blue; font-weight: bold">N</span>
@@ -211,7 +211,7 @@
 
                 document.getElementById("Density").innerHTML = airdrag.density;
                 document.getElementById("Coefficient").innerHTML = airdrag.coefficient;
-                document.getElementById("Area").innerHTML = Math.round((ball.radius * 2 * Math.PI) * 100) / 100;
+                document.getElementById("Angle").innerHTML = Math.round(Math.atan(ball.vel.y/ball.vel.x) * 180 /Math.PI);
                 document.getElementById("Distance").innerHTML = Math.round(totalDistance.x * 100) /100
                 document.getElementById("VelocityX").innerHTML = Math.round(ball.vel.x * 100) /100;
                 document.getElementById("VelocityY").innerHTML = Math.round(ball.vel.y * 100) /100;
@@ -252,8 +252,7 @@
 
                 document.getElementById("Density").innerHTML = airdrag.density;
                 document.getElementById("Coefficient").innerHTML = airdrag.coefficient;
-                document.getElementById("Area").innerHTML = Math.round((ball.radius * 2 * Math.PI) * 100) / 100;
-                document.getElementById("Distance").innerHTML = Math.round(totalDistance.x * 100) /100
+                document.getElementById("Angle").innerHTML = Math.round(Math.atan(ball.vel.y/ball.vel.x) * 180 /Math.PI);                document.getElementById("Distance").innerHTML = Math.round(totalDistance.x * 100) /100
                 document.getElementById("VelocityX").innerHTML = Math.round(ball.vel.x * 100) /100;
                 document.getElementById("VelocityY").innerHTML = Math.round(ball.vel.y * 100) /100;
                 document.getElementById("airDrag").innerHTML = Math.round(airDragForce * 100) / 100;
