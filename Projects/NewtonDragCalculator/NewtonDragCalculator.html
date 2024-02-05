@@ -9,16 +9,15 @@
     <body>
 
         <!--Displaying cookies-->
-        <button onclick = "this.style.display='none'">
-            Press me for snacks!!
+        <button onclick = "run()" class = "button">
+            Run
         </button>
  
-        <button onclick = "add()">
-            add more snacks
+        <button onclick = "restart()" class = "button">
+            Restart
         </button>
-        <span id = "cookies" style="color: brown;">0 </span> cookies
-        <br>
 
+        <br>
         <!--Input density and Drag coefficient-->
 
         Density :<input type = "range" min = "0" max = "100" value = "0" id = "density" class = "slider"> 
@@ -38,9 +37,12 @@
         Drag Coefficient : <span style = "color:blue; font-weight:bold" id = "Coefficient">50</span>
 
         <br>
+
+        Cross sectional area : <span style = "color:blue; font-weight:bold" id = "Area">0</span> <span style="color: blue; font-weight: bold">m^2</span>
+
+        <br>
         Total Distance Traveled horizontally : <span style = "color:blue; font-weight:bold" id = "Density">0</span> <span style="color: blue; font-weight: bold">m</span>
         <br>
-        Cross sectional area : <span style = "color:blue; font-weight:bold" id = "Area">0</span> <span style="color: blue; font-weight: bold">m^2</span>
 
 
         <script>
@@ -98,11 +100,15 @@
 
 
             //BALL 
+            var ballvel = {
+                x : 30,
+                y : 30
+            }
 
             var ball = {
                 radius : 0.5,
                 pos : {x : 0, y : 0},
-                vel : {x :  10, y : 10},
+                vel : {x :  ballvel.x, y : ballvel.y},
                 area : function() {
                     return 2.0 * Math.PI * this.radius;
                 }
@@ -156,11 +162,7 @@
                     ball.vel.x = 0;
                     end();
                 }
-
-                if (ball.pos.y >= simHeight- ball.radius){
-                    ball.pos.y = simHeight - ball.radius;
-                    ball.vel.y = -ball.vel.y;
-                }
+                
 
 
                 document.getElementById("Density").innerHTML = airdrag.density;
@@ -176,7 +178,44 @@
                 requestAnimationFrame(update);
             }
 
-            update();
+            function run() {
+                update();
+            }
+            function restart() {
+                ball.pos.x = 0;
+                ball.pos.y = 0;
+                ball.vel.x = ballvel.x;
+                ball.vel.y = ballvel.y;
+                c.clearRect(0, 0, canvas.width, canvas.height);
+
+                c.fillStyle = "#FF0000";
+
+                c.beginPath();
+                c.arc(
+                    cX(ball.pos), cY(ball.pos), cScale * ball.radius, 0.0, 2.0 * Math.PI
+                )
+                c.closePath();
+                c.fill();
+            }
+
+            function init() {
+                ball.pos.x = 0;
+                ball.pos.y = 0;
+                ball.vel.x = ballvel.x;
+                ball.vel.y = ballvel.y;
+                c.clearRect(0, 0, canvas.width, canvas.height);
+
+                c.fillStyle = "#FF0000";
+
+                c.beginPath();
+                c.arc(
+                    cX(ball.pos), cY(ball.pos), cScale * ball.radius, 0.0, 2.0 * Math.PI
+                )
+                c.closePath();
+                c.fill();
+            }
+
+            init() 
 
         </script>
     </body>
