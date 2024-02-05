@@ -2,7 +2,7 @@
 
 For Physics Simulations
 
-Chemistry?
-wonjuneange@gmail.com
-Wonjun Choi
+Chemistry? \n
+wonjuneange@gmail.com\n
+Wonjun Choi \n
 
