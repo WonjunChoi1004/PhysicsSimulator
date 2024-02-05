@@ -50,6 +50,8 @@
             }
 
             var timeStep = 1.0 / 120;
+            var n = 5;
+            var subTimeStep = timeStep / n;
 
 
             var ball = {
@@ -131,28 +133,40 @@
             //simulation ----------
 
             function simulate() {
+                for (i = 1; i < 5; i++) {
 
-                ball.velocity.x += gravity.x * timeStep;
-                ball.velocity.y += gravity.y * timeStep;
+                ball.velocity.x += gravity.x * subTimeStep;
+                ball.velocity.y += gravity.y * subTimeStep;
 
-                ball.pos.x += ball.velocity.x * timeStep;
-                ball.pos.y += ball.velocity.y * timeStep;
+                ball.pos.x += ball.velocity.x * subTimeStep;
+                ball.pos.y += ball.velocity.y * subTimeStep;
 
 
-                if (ball.pos.x <= ball.radius || ball.pos.x >= simWidth) {
-                    ball.velocity.x = - ball.e *ball.velocity.x;
+                if (ball.pos.x <= ball.radius ) {
+                    ball.pos.x = ball.radius;
+                    ball.velocity.x = - ball.e * ball.velocity.x;
                 }
-                if (ball.pos.y <= ball.radius || ball.pos.y >= simHeight) {
+                if (ball.pos.x >= simWidth - ball.radius) {
+                    ball.pos.x = simWidth - ball.radius;
+                    ball.velocity.x = - ball.e * ball.velocity.x;
+                }
+                if (ball.pos.y <= ball.radius) {
+                    ball.pos.y = ball.radius;
                     ball.velocity.y = -ball.e * ball.velocity.y;
                 }
 
-                stick.velocity.x += gravity.x * timeStep;
-                stick.velocity.y += gravity.y * timeStep;
+                if (ball.pos.y >= simHeight- ball.radius){
+                    ball.pos.y = simHeight - ball.radius;
+                    ball.velocity.y = -ball.e * ball.velocity.y;
+                }
 
-                stick.pos1.x += stick.velocity.x * timeStep;
-                stick.pos1.y += stick.velocity.y * timeStep;
-                stick.pos2.x += stick.velocity.x * timeStep;
-                stick.pos2.y += stick.velocity.y * timeStep;
+                stick.velocity.x += gravity.x * subTimeStep;
+                stick.velocity.y += gravity.y * subTimeStep;
+
+                stick.pos1.x += stick.velocity.x * subTimeStep;
+                stick.pos1.y += stick.velocity.y * subTimeStep;
+                stick.pos2.x += stick.velocity.x * subTimeStep;
+                stick.pos2.y += stick.velocity.y * subTimeStep;
 
 
                 if (stick.pos2.x <= stick.radius || stick.pos1.x + 3* stick.radius >= simWidth) {
@@ -162,7 +176,7 @@
                     stick.velocity.y = - stick.e * stick.velocity.y;
                 }
 
-
+            }
                 
             }
 
