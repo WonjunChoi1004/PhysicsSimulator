@@ -9,11 +9,11 @@
     <body>
 
         <!--Displaying cookies-->
-        <button onclick = "run()" class = "button">
+        <button onclick = "activated == 1" class = "button">
             Run
         </button>
  
-        <button onclick = "restart()" class = "button">
+        <button onclick = "activated == 0" class = "button">
             Restart
         </button>
 
@@ -35,6 +35,11 @@
         <canvas id = "myCanvas" style = "border: 2px solid" ></canvas>
 
         <!-- Values -->
+        Velocity x : <span style = "color:blue; font-weight:bold" id = "VelocityX">0</span> <span style="color: blue; font-weight: bold">m/s</span>
+
+        <br>
+        Velocity y : <span style = "color:blue; font-weight:bold" id = "VelocityY">0</span> <span style="color: blue; font-weight: bold">m/s</span>
+        
         <br>
 
         Density of the Air : <span style = "color:blue; font-weight:bold" id = "Density">50</span> <span style="color: blue; font-weight: bold">g/m^3</span>
@@ -52,6 +57,7 @@
 
 
         <script>
+            var activated = 0;
 
             var cookies = 0;
 
@@ -78,6 +84,13 @@
 
             function cY(pos) {
                 return canvas.height - pos.y * cScale;
+            }
+
+            function polarToX(polar) {
+                return polar.r * Math.cos(polar.angle * Math.PI / 180);
+            }
+            function polarToY(polar) {
+                return polar.r * Math.sin(polar.angle * Math.PI / 180);
             }
 
 
@@ -108,9 +121,13 @@
 
             //BALL 
             var ballvel = {
-                x : 30,
-                y : 30
+                polar : {
+                    angle : 45,
+                    r : 10
+                }
             }
+
+            
 
             var ball = {
                 radius : 0.5,
@@ -149,6 +166,14 @@
             document.getElementById("coefficient").oninput = function() {
                 airdrag.coefficient = this.value;
             }
+            document.getElementById("velocity").oninput = function() {
+                ballvel.polar.r = this.value;
+            }
+            document.getElementById("angle").oninput = function() {
+                ballvel.polar.angle = this.value;
+            } 
+            
+            
             
 
 
@@ -185,13 +210,11 @@
                 }
 
 
-
+                
                 document.getElementById("Density").innerHTML = airdrag.density;
                 document.getElementById("Coefficient").innerHTML = airdrag.coefficient;
                 document.getElementById("Area").innerHTML = Math.round((ball.radius * 2 * Math.PI) * 100) / 100;
-
                 document.getElementById("Distance").innerHTML = Math.round(totalDistance.x * 100) /100
-
             }
 
             //make browser to call us repeatedly ------------
@@ -210,13 +233,10 @@
             }
 
             function init() {
-                document.getElementById("density").oninput = function() {
-                airdrag.density = this.value;
-            }
                 ball.pos.x = ball.radius;
                 ball.pos.y = ball.radius
-                ball.vel.x = ballvel.x;
-                ball.vel.y = ballvel.y;
+                ball.vel.x = polarToX(ballvel.polar);
+                ball.vel.y = polarToY(ballvel.polar);
                 totalDistance.x = 0;
                 totalDistance.y = 0;
                 totalDistance.finished = 1;
@@ -230,10 +250,11 @@
                 )
                 c.closePath();
                 c.fill();
+
+                document.getElementById("VelocityX").innerHTML = polarToX(ballvel.polar);
+                document.getElementById("VelocityY").innerHTML = ball.vel.y;
             }
-
-            init() 
-
+            
         </script>
     </body>
 </html>
