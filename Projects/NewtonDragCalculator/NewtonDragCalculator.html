@@ -87,7 +87,13 @@
 
             var airdrag = {
                 density : 0,
-                coefficient : -0,
+                coefficient : 0,
+            }
+
+            var totalDistance = {
+                x : 0,
+                y : 0,
+                finished : 1
             }
 
 
@@ -144,9 +150,11 @@
                     ball.pos.x = simWidth - ball.radius;
                     ball.vel.x = -ball.vel.x;
                 }
-                if (ball.pos.y <= ball.radius) {
+                if (ball.pos.y < 0) {
                     ball.pos.y = ball.radius;
-                    ball.vel.y = -ball.vel.y;
+                    ball.vel.y = 0;
+                    ball.vel.x = 0;
+                    end();
                 }
 
                 if (ball.pos.y >= simHeight- ball.radius){
