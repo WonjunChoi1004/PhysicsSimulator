@@ -1,0 +1,154 @@
+<!DOCTYPE html> 
+<html>
+    <head>
+        <title> CannonBall 2 </title>
+    </head>
+
+    <body>
+
+        <canvas id = "myCanvas" style = "border: 2px solid" ></canvas>
+
+
+
+        <script>
+
+            // Canvas setup ---------
+
+            var canvas = document.getElementById("myCanvas");
+            var c = canvas.getContext("2d");
+            canvas.width = window.innerWidth - 20;
+            canvas.height = window.innerHeight - 100;
+
+            var simMinWidth = 20.0;
+            var cScale = Math.min(canvas.width, canvas.height) / simMinWidth;
+            var simWidth = canvas.width / cScale;
+            var simHeight = canvas.height / cScale;
+
+            function cX(pos) {
+                return pos.x * cScale;
+            }
+
+            function cY(pos) {
+                return canvas.height - pos.y * cScale;
+            }
+
+
+            //Scene setup -------
+
+            var timeStep = 1.0/60.0;
+
+            var gravity = {
+                x : 0,
+                y : -10.0
+            }
+
+            var ball1 = {
+                radius : 1.0,
+                pos : {x : 1.0, y : 1.0},
+                vel : {x : 10.0, y : 10.0}
+            };
+
+            var ball2 = {
+                radius : 1.0,
+                pos : {x : simWidth - 1, y : simHeight - 1},
+                vel : {x : -10.0, y : -10.0}
+            };
+            
+
+
+            // Drawing ---------------
+            function draw() {
+                c.clearRect(0, 0, canvas.width, canvas.height);
+
+                //Ball 1
+                c.fillStyle = "#FF0000";
+
+                c.beginPath();
+                c.arc(
+                    cX(ball1.pos), cY(ball1.pos), cScale * ball1.radius, 0.0, 2.0 * Math.PI
+                )
+                c.closePath();
+                c.fill();
+
+                c.fillStyle = "#00FF00"
+                c.beginPath();
+                c.arc(
+                    cX(ball2.pos), cY(ball2.pos), cScale * ball2.radius, 0.0, 2.0 * Math.PI
+                )
+                c.closePath();
+                c.fill();
+            }
+
+            //simulation ----------
+
+            function simulate() {
+                //Ball 1
+                ball1.vel.x += gravity.x * timeStep;
+                ball1.vel.y += gravity.y * timeStep;
+
+                ball1.pos.x += ball1.vel.x * timeStep;
+                ball1.pos.y += ball1.vel.y * timeStep;
+
+
+                //Ball 2
+                ball2.vel.x += gravity.x * timeStep;
+                ball2.vel.y += gravity.y * timeStep;
+
+                ball2.pos.x += ball2.vel.x * timeStep;
+                ball2.pos.y += ball2.vel.y * timeStep;
+
+
+                //Ball 1 boundary
+                
+                if (ball1.pos.x <= ball1.radius) {
+                    ball1.pos.x = ball1.radius;
+                    ball1.vel.x = - ball1.vel.x * (1 + (Math.random()/10));
+                }
+                if (ball1.pos.x >= simWidth - ball1.radius) {
+                    ball1.pos.x = simWidth - ball1.radius;
+                    ball1.vel.x = - ball1.vel.x * (1 + (Math.random()/10));
+                }
+                if (ball1.pos.y <= ball1.radius) {
+                    ball1.pos.y = ball1.radius;
+                    ball1.vel.y = - ball1.vel.y * (1 + (Math.random()/10));
+                }
+                if (ball1.pos.y >= simHeight - ball1.radius) {
+                    ball1.pos.y = simHeight - ball1.radius;
+                    ball1.vel.y = - ball1.vel.y * (1 + (Math.random()/10));
+                }
+
+
+
+                //Ball 2 boundary
+                
+                if (ball2.pos.x <= ball2.radius) {
+                    ball2.pos.x = ball2.radius
+                    ball2.vel.x = - ball2.vel.x;
+                }
+                if (ball2.pos.x >= simWidth - ball2.radius) {
+                    ball2.pos.x = simWidth - ball2.radius;
+                    ball2.vel.x = - ball2.vel.x
+                }
+                if (ball2.pos.y <= ball2.radius) {
+                    ball2.pos.y = ball2.radius;
+                    ball2.vel.y = - ball2.vel.y;
+                }
+                if (ball2.pos.y >= simHeight - ball2.radius) {
+                    ball2.pos.y = simHeight - ball2.radius;
+                    ball2.vel.y = - ball2.vel.y;
+                }
+            }
+
+            //make browser to call us repeatedly ------------
+
+            function update() {
+                simulate();
+                draw();
+                requestAnimationFrame(update);
+            }
+
+            update();
+
+        </script>
+    </body>
+</html>
