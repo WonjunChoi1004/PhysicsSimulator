@@ -2,7 +2,7 @@
 Created on Febrary 4th
 
 
-## Aim (#physics-project)
+## [Aim](#physics-project)
 For the Science project due in 2 month
 
 1. Learn computational mechanisms through [10 minute physics](https://www.youtube.com/@TenMinutePhysics)
