@@ -2,7 +2,7 @@
 Created on Febrary 4th
 
 <p align ="center">
-  <img src="/Assets/Screenshot%202024-02-05%20at%202.02.01%20AM.png">
+  <img src="/Assets/Screenshot%202024-02-05%20at%202.02.01%20AM.png" alt="drawing" style="width:200px;">
 </p>
 
 
