@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ball Trajectory Simulation</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" width="600" height="400"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Ball properties
+        const ballRadius = 10;
+        let ballX = 50;
+        let ballY = canvas.height - ballRadius;
+        let ballSpeedX = 10;
+        let ballSpeedY = 10;
+        const gravity = 0.5;
+        const friction = 0.99;
+
+        function drawBall() {
+            ctx.beginPath();
+            ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
+            ctx.fillStyle = 'blue';
+            ctx.fill();
+            ctx.closePath();
+        }
+
+        function updateBallPosition() {
+            // Update position and velocity due to gravity
+            ballY += ballSpeedY;
+            ballSpeedY += gravity;
+
+            // Apply friction to slow down the horizontal motion
+            ballSpeedX *= friction;
+
+            // Detect collision with the ground
+            if (ballY > canvas.height - ballRadius) {
+                ballY = canvas.height - ballRadius;
+                ballSpeedY = -ballSpeedY * friction;
+            }
+
+            // Update horizontal position
+            ballX += ballSpeedX;
+
+            // Detect collision with the walls
+            if (ballX - ballRadius <= 0 || ballX + ballRadius >= canvas.width) {
+                ballSpeedX = -ballSpeedX;
+            }
+        }
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function drawFrame() {
+            clearCanvas();
+            updateBallPosition();
+            drawBall();
+            requestAnimationFrame(drawFrame);
+        }
+
+        drawFrame();
+    </script>
+</body>
+</html>
