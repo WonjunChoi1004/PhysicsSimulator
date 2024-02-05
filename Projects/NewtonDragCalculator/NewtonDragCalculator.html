@@ -1,0 +1,175 @@
+<!--Made Febrary 5th    -->
+
+<!DOCTYPE html> 
+<html>
+    <head>
+        <title> Newton Drag Calculator </title>
+    </head>
+
+    <body>
+
+        <!--Displaying cookies-->
+        <button onclick = "this.style.display='none'">
+            Press me for snacks!!
+        </button>
+ 
+        <button onclick = "add()">
+            add more snacks
+        </button>
+        <span id = "cookies" style="color: brown;">0 </span> cookies
+        <br>
+
+        <!--Input density and Drag coefficient-->
+
+        Density :<input type = "range" min = "0" max = "100" value = "0" id = "density" class = "slider"> 
+        <br>
+
+        Drag coefficient :<input type = "range" min = "0" max = "100" value = "0" id = "coefficient" class = "slider">
+
+        
+        <canvas id = "myCanvas" style = "border: 2px solid" ></canvas>
+
+        <!-- Values -->
+        <br>
+
+        Density of the Air : <span style = "color:blue; font-weight:bold" id = "Density">50</span> <span style="color: blue; font-weight: bold">g/m^3</span>
+        <br>
+
+        Drag Coefficient : <span style = "color:blue; font-weight:bold" id = "Coefficient">50</span>
+
+        <br>
+        Total Distance Traveled horizontally : <span style = "color:blue; font-weight:bold" id = "Density">0</span> <span style="color: blue; font-weight: bold">m</span>
+        <br>
+        Cross sectional area : <span style = "color:blue; font-weight:bold" id = "Area">0</span> <span style="color: blue; font-weight: bold">m^2</span>
+
+
+        <script>
+
+            var cookies = 0;
+
+            function add() {
+                cookies += 1;
+                document.getElementById("cookies").innerHTML = cookies;
+            }
+
+            // Canvas setup ---------
+
+            var canvas = document.getElementById("myCanvas");
+            var c = canvas.getContext("2d");
+            canvas.width = window.innerWidth - 20;
+            canvas.height = window.innerHeight - 160;
+
+            var simMinWidth = 20.0;
+            var cScale = Math.min(canvas.width, canvas.height) / simMinWidth;
+            var simWidth = canvas.width / cScale;
+            var simHeight = canvas.height / cScale;
+
+            function cX(pos) {
+                return pos.x * cScale;
+            }
+
+            function cY(pos) {
+                return canvas.height - pos.y * cScale;
+            }
+
+
+            //Scene setup -------
+
+            var timeSplit = 1.0 / 120.0;
+
+            var gravity = {
+                x : 0,
+                y : -10
+            }
+
+            // Drag Equation
+            //1/2 * (Density) * (velocity) ^2 * (Drag Coefficient) * Area
+
+            var airdrag = {
+                density : 0,
+                coefficient : -0,
+            }
+
+
+            //BALL 
+
+            var ball = {
+                radius : 0.5,
+                pos : {x : 0, y : 0},
+                vel : {x :  10, y : 10},
+                area : function() {
+                    return 2.0 * Math.PI * this.radius;
+                }
+            };
+
+
+            // Drawing ---------------
+            function draw() {
+                c.clearRect(0, 0, canvas.width, canvas.height);
+
+                c.fillStyle = "#FF0000";
+
+                c.beginPath();
+                c.arc(
+                    cX(ball.pos), cY(ball.pos), cScale * ball.radius, 0.0, 2.0 * Math.PI
+                )
+                c.closePath();
+                c.fill();
+            }
+
+            document.getElementById("density").oninput = function() {
+                airdrag.density = this.value;
+            }
+            document.getElementById("coefficient").oninput = function() {
+                airdrag.coefficient = this.value;
+            }
+            
+
+
+            //simulation ----------
+
+            function simulate() {
+
+                ball.vel.x += gravity.x * timeSplit;
+                ball.vel.y += gravity.y * timeSplit;
+
+                ball.pos.x += ball.vel.x * timeSplit;
+                ball.pos.y += ball.vel.y * timeSplit;
+
+                if (ball.pos.x <= ball.radius ) {
+                    ball.pos.x = ball.radius;
+                    ball.vel.x = -ball.vel.x;
+                }
+                if (ball.pos.x >= simWidth - ball.radius) {
+                    ball.pos.x = simWidth - ball.radius;
+                    ball.vel.x = -ball.vel.x;
+                }
+                if (ball.pos.y <= ball.radius) {
+                    ball.pos.y = ball.radius;
+                    ball.vel.y = -ball.vel.y;
+                }
+
+                if (ball.pos.y >= simHeight- ball.radius){
+                    ball.pos.y = simHeight - ball.radius;
+                    ball.vel.y = -ball.vel.y;
+                }
+
+
+                document.getElementById("Density").innerHTML = airdrag.density;
+                document.getElementById("Coefficient").innerHTML = airdrag.coefficient;
+                document.getElementById("Area").innerHTML = Math.round((ball.radius * 2 * Math.PI) *100) / 100;
+            }
+
+            //make browser to call us repeatedly ------------
+
+            function update() {
+                simulate();
+                draw();
+                requestAnimationFrame(update);
+            }
+
+            update();
+
+        </script>
+    </body>
+</html>
