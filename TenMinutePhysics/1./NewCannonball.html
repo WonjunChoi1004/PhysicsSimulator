@@ -1,0 +1,40 @@
+<!--Created Febrary 4th during Winterweekend-->
+
+<!DOCTYPE html> 
+<html>
+    <head>
+        <title> Cannonball </title>
+    </head>
+
+    <body>
+
+        <canvas id = "myCanvas" style = "border: 2px solid" ></canvas>
+
+        <canvas id = "1canvas" style = "border: 2px solid" ></canvas>
+
+        <script>
+
+            // Drawing ---------------
+            function draw() {
+
+            }
+
+            //simulation ----------
+
+            function simulate() {
+                
+            }
+
+            //make browser to call us repeatedly ------------
+
+            function update() {
+                simulate();
+                draw();
+                requestAnimationFrame(update);
+            }
+
+            update();
+
+        </script>
+    </body>
+</html>
