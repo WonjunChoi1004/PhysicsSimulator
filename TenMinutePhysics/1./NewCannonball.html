@@ -1,29 +1,99 @@
-<!--Created Febrary 4th during Winterweekend-->
-
 <!DOCTYPE html> 
 <html>
     <head>
-        <title> Cannonball </title>
+        <title> Hello </title>
     </head>
 
     <body>
 
         <canvas id = "myCanvas" style = "border: 2px solid" ></canvas>
+        <canvas id = "myCanvas1" style = "border : 2px solid"></canvas>
 
-        <canvas id = "1canvas" style = "border: 2px solid" ></canvas>
 
         <script>
 
+            // Canvas setup ---------
+
+            var canvas = document.getElementById("myCanvas");
+            var c = canvas.getContext("2d");
+            canvas.width = window.innerWidth - 20;
+            canvas.height = window.innerHeight - 0;
+
+            var simMinWidth = 20.0;
+            var cScale = Math.min(canvas.width, canvas.height) / simMinWidth;
+            var simWidth = canvas.width / cScale;
+            var simHeight = canvas.height / cScale;
+
+            function cX(pos) {
+                return pos.x * cScale;
+            }
+
+            function cY(pos) {
+                return canvas.height - pos.y * cScale;
+            }
+
+
+
+
+            //Scene setup -------
+
+            var ball = {
+                radius : 0.2,
+                pos : {x : 0.2, y : 0.2}
+            }
+
+            var stick = {
+                length : 10.0,
+                pos1 : {x : 10, y :10},
+                pos2 : {x : 10, y : 1},
+
+                radius : 1.0
+            }
+
+
+
+
+
             // Drawing ---------------
             function draw() {
+                c.clearRect(0, 0, canvas.width, canvas.height);
 
+                c.fillStyle = "#FF0000";
+
+                c.beginPath();
+
+
+                //Ball
+                c.fillStyle = "#FF0000";
+                c.arc(
+                    cX(ball.pos), cY(ball.pos), cScale * ball.radius, 0.0, 2.0 * Math.PI
+                )
+                c.fillStyle = "#FF0000";
+
+
+                //Stick
+                c.fillStyle = "#AAAA00";
+
+                c.arc(cX(stick.pos1), cY(stick.pos1), stick.radius * cScale, 0, 2 * Math.PI);
+                c.resetTransform();
+                c.closePath();
+                c.fill();
             }
+
+
+
+
+
 
             //simulation ----------
 
             function simulate() {
-                
+
             }
+
+
+
+
 
             //make browser to call us repeatedly ------------
 
@@ -32,7 +102,6 @@
                 draw();
                 requestAnimationFrame(update);
             }
-
             update();
 
         </script>
