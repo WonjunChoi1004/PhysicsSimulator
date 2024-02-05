@@ -1,4 +1,4 @@
-# Physics Simulator
+# ++Physics Project++
 Created on Febrary 4th
 
 
@@ -9,5 +9,8 @@ For the Science project due in 2 month
 3. Find where the simulation of fluids can be applied
 4. Write the code for the fluid simulation
 5. Write the project document
+
+## Schedule
+
 
 
