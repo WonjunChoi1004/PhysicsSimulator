@@ -1,0 +1,220 @@
+
+
+<!DOCTYPE html> 
+<html>
+    <head>
+        <title> February 11th </title>
+    </head>
+
+    <body>
+        <button id="Start" onclick="start()">Start</button>
+
+        <canvas id = "myCanvas" style = "border: 2px solid" ></canvas>
+
+        Earth Velocity : <span id = "Earth vel">0</span> 
+        <br> 
+        Ball velocity : <span id="ball vel">0</span>
+
+
+
+        <script>
+
+            // Canvas setup ---------
+
+            var canvas = document.getElementById("myCanvas");
+            var c = canvas.getContext("2d");
+            canvas.width = window.innerWidth - 20;
+            canvas.height = window.innerHeight - 100;
+
+            var simMinWidth = 20.0;
+            var cScale = Math.min(canvas.width, canvas.height) / simMinWidth;
+            var simWidth = canvas.width / cScale;
+            var simHeight = canvas.height / cScale;
+
+            function cX(pos) {
+                return pos.x * cScale;
+            }
+
+            function cY(pos) {
+                return canvas.height - pos.y * cScale;
+            }
+
+
+            //Scene setup -------
+
+            var physicsScene = {
+                dt : 1.0/ 60.0,
+
+                gravity : {
+                magnitude : 0,
+                direction : 0,
+                x : 0,
+                y : 0
+                }
+            }
+
+            var balls = {
+                ball : {
+                pos : {
+                    x : simMinWidth/2,
+                    y : 5
+                },
+                velocity : {
+                    x : 20,
+                    y : 0
+                },
+                radius : 0.1
+                },
+
+                Earth : {
+                pos : {
+                    x : simWidth / 2,
+                    y : 9
+                },
+                velocity : {
+                    x : 3.1,
+                    y : 0
+                },
+                radius : 0.3
+                }
+
+            }
+            
+
+            var Sun = {
+                pos : {
+                    x : simWidth / 2,
+                    y : simHeight / 2
+                },
+                radius : 2
+            }
+
+            
+
+
+            // Drawing ---------------
+            function draw() {
+                c.clearRect(0, 0, canvas.width, canvas.height);
+
+                c.fillStyle = "#FF0000";
+
+                c.beginPath();
+                c.arc(
+                    cX(balls.ball.pos), cY(balls.ball.pos), cScale * balls.ball.radius, 0.0, 2.0 * Math.PI
+                )
+                c.closePath();
+                c.fill();
+
+
+                c.fillStyle = "#00FF00";
+
+                c.beginPath();
+                c.arc(
+                    cX(balls.Earth.pos), cY(balls.Earth.pos), cScale * balls.Earth.radius, 0.0, 2.0 * Math.PI
+                )
+                c.closePath();
+                c.fill();
+
+                c.fillStyle = "#FFFF00";
+
+                c.beginPath();
+                c.arc(
+                    cX(Sun.pos), cY(Sun.pos), cScale * Sun.radius, 0.0, 2.0 * Math.PI
+                )
+                c.closePath();
+                c.fill();
+
+            }
+
+            //simulation ----------
+
+            function simulate() {
+                if (!On) {
+                    return;
+                }
+
+                //Ball
+
+                physicsScene.gravity.magnitude = Math.hypot(
+                    Sun.pos.x - balls.ball.pos.x, Sun.pos.y - balls.ball.pos.y
+                )
+                physicsScene.gravity.magnitude = 
+                Sun.radius * Sun.radius * balls.ball.radius * balls.ball.radius / 
+                (physicsScene.gravity.magnitude * physicsScene.gravity.magnitude * physicsScene.gravity.magnitude) * 100000;
+
+                
+
+                physicsScene.gravity.x = (Sun.pos.x - balls.ball.pos.x) * physicsScene.gravity.magnitude;
+                physicsScene.gravity.y = (Sun.pos.y - balls.ball.pos.y) * physicsScene.gravity.magnitude;
+                
+                
+                balls.ball.velocity.x += physicsScene.gravity.x * physicsScene.dt;
+                balls.ball.velocity.y += physicsScene.gravity.y * physicsScene.dt;
+                
+                balls.ball.pos.x += balls.ball.velocity.x * physicsScene.dt;
+                balls.ball.pos.y += balls.ball.velocity.y * physicsScene.dt;
+
+                //Earth
+
+                physicsScene.gravity.magnitude = Math.hypot(
+                    Sun.pos.x - balls.Earth.pos.x, Sun.pos.y - balls.Earth.pos.y
+                )
+
+                physicsScene.gravity.magnitude = 
+                Sun.radius * Sun.radius * balls.Earth.radius * balls.Earth.radius / 
+                (physicsScene.gravity.magnitude * physicsScene.gravity.magnitude * physicsScene.gravity.magnitude) * 100;
+
+                
+                physicsScene.gravity.x = (Sun.pos.x - balls.Earth.pos.x) * physicsScene.gravity.magnitude;
+                physicsScene.gravity.y = (Sun.pos.y - balls.Earth.pos.y) * physicsScene.gravity.magnitude;
+                
+                
+                balls.Earth.velocity.x += physicsScene.gravity.x * physicsScene.dt;
+                balls.Earth.velocity.y += physicsScene.gravity.y * physicsScene.dt;
+                
+                balls.Earth.pos.x += balls.Earth.velocity.x * physicsScene.dt;
+                balls.Earth.pos.y += balls.Earth.velocity.y * physicsScene.dt;
+                
+                
+
+            }
+
+            function start() {
+                On = true;
+            }
+
+            // Start
+
+            var On = false;
+
+            //make browser to call us repeatedly ------------
+
+            function update() {
+                simulate();
+                draw();
+                requestAnimationFrame(update);
+                document.getElementById("Earth vel").innerHTML = Math.hypot(
+                    balls.Earth.velocity.x, balls.Earth.velocity.y
+                ).toFixed(3);
+
+                document.getElementById("ball vel").innerHTML = Math.hypot(
+                    balls.ball.velocity.x, balls.ball.velocity.y
+                ).toFixed(3);
+            }
+
+            function init() {
+                document.getElementById("Earth vel").innerHTML = Math.hypot(
+                    balls.Earth.velocity.x, balls.Earth.velocity.y
+                ).toFixed(3);
+
+                document.getElementById("ball vel").innerHTML = Math.hypot(
+                    balls.ball.velocity.x, balls.ball.velocity.y
+                ).toFixed(3);
+            }
+
+            init();
+            update();
+
+        </script>
+    </body>
+</html>
