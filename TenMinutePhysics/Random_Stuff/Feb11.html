@@ -11,9 +11,9 @@
 
         <canvas id = "myCanvas" style = "border: 2px solid" ></canvas>
 
-        Earth Velocity : <span id = "Earth vel">0</span> 
+        Earth Velocity : <span id = "Earth vel">0</span> &emsp;Distance : <span id ="Earth distance">0</span>
         <br> 
-        Ball velocity : <span id="ball vel">0</span>
+        Ball velocity : <span id="ball vel">0</span> &emsp;Distance : <span id ="ball distance">0</span>
 
 
 
@@ -57,10 +57,10 @@
                 ball : {
                 pos : {
                     x : simWidth/2,
-                    y : simHeight/8
+                    y : simHeight/4
                 },
                 velocity : {
-                    x : 20,
+                    x : 30,
                     y : 0
                 },
                 radius : 0.1
@@ -69,10 +69,10 @@
                 Earth : {
                 pos : {
                     x : simWidth / 2,
-                    y : simHeight/4
+                    y : simHeight/8
                 },
                 velocity : {
-                    x : 3.1,
+                    x : 1,
                     y : 0
                 },
                 radius : 0.3
@@ -86,7 +86,7 @@
                     x : simWidth / 2,
                     y : simHeight / 2
                 },
-                radius : 2
+                radius : 1
             }
 
             
@@ -140,7 +140,7 @@
                 )
                 physicsScene.gravity.magnitude = 
                 Sun.radius * Sun.radius * balls.ball.radius * balls.ball.radius / 
-                (physicsScene.gravity.magnitude * physicsScene.gravity.magnitude * physicsScene.gravity.magnitude) * 100000;
+                (physicsScene.gravity.magnitude * physicsScene.gravity.magnitude * physicsScene.gravity.magnitude) * 500000;
 
                 
 
@@ -200,16 +200,18 @@
                 document.getElementById("ball vel").innerHTML = Math.hypot(
                     balls.ball.velocity.x, balls.ball.velocity.y
                 ).toFixed(3);
+
+                document.getElementById("Earth distance").innerHTML = Math.hypot(
+                    Sun.pos.x - balls.Earth.pos.x, Sun.pos.y - balls.Earth.pos.y
+                ).toFixed(3);
+
+                document.getElementById("ball distance").innerHTML = Math.hypot(
+                    Sun.pos.x - balls.ball.pos.x, Sun.pos.y - balls.ball.pos.y
+                ).toFixed(3);
+                
             }
 
             function init() {
-                document.getElementById("Earth vel").innerHTML = Math.hypot(
-                    balls.Earth.velocity.x, balls.Earth.velocity.y
-                ).toFixed(3);
-
-                document.getElementById("ball vel").innerHTML = Math.hypot(
-                    balls.ball.velocity.x, balls.ball.velocity.y
-                ).toFixed(3);
             }
 
             init();
