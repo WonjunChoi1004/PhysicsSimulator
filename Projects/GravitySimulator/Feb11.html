@@ -8,6 +8,8 @@
 
     <body>
         <button id="Start" onclick="start()">Start</button>
+        <button id="Reset" onclick="Reset()">Reset</button>
+
 
         <canvas id = "myCanvas" style = "border: 2px solid" ></canvas>
 
@@ -180,7 +182,12 @@
             }
 
             function start() {
-                On = true;
+                var button = document.getElementById('Start');
+				if (!On)
+					button.innerHTML = "Stop";
+				else
+					button.innerHTML = "Run";
+				On = !On;
             }
 
             // Start
@@ -212,6 +219,24 @@
             }
 
             function init() {
+                balls.ball.pos.x  = simWidth/2;
+                balls.ball.pos.y = simHeight/4;
+                
+                balls.ball.velocity.x = 30;
+                balls.ball.velocity.y = 0;
+                
+                balls.ball.velocity.radius = 0.1;
+                
+
+                balls.Earth.pos.x = simWidth / 2;
+                balls.Earth.pos.y = simHeight/8;
+                
+                balls.Earth.velocity.x = 1;
+                balls.Earth.velocity.y = 0;
+            }
+
+            function Reset() {
+                init();
             }
 
             init();
