@@ -1,0 +1,204 @@
+<!DOCTYPE html> 
+<html>
+    <head>
+        <title> Hello </title>
+    </head>
+
+    <body>
+        <button id = "start" onclick = "update()">Start</button>
+        <br>
+        Canvas Height : <span id = "canvas height" >0</span> &emsp;
+        Canvas Width : <span id = "canvas width" >0</span>
+        <br>
+        Actual Height : <span id = "actual height" >0</span> &emsp;
+        Acutal Width : <span id = "actual width" >0</span>
+        <canvas id = "myCanvas" style = "border: 2px solid" ></canvas>
+
+        
+
+
+
+        <script>
+
+            // Canvas setup ---------
+
+            var canvas = document.getElementById("myCanvas");
+            var c = canvas.getContext("2d");
+            canvas.width = window.innerWidth - 20;
+            canvas.height = window.innerHeight - 100;
+
+            var simMinWidth = 20.0;
+            var cScale = Math.min(canvas.width, canvas.height) / simMinWidth;
+            var simWidth = canvas.width / cScale;
+            var simHeight = canvas.height / cScale;
+
+            function cX(pos) {
+                return pos.x * cScale;
+            }
+
+            function cY(pos) {
+                return canvas.height - pos.y * cScale;
+            }
+
+
+            // Vector Math ------------
+
+            class Vector2 {
+                constructor (x, y){
+                    this.x = x;
+                    this.y = y;
+                }
+
+                set(v) {
+                    this.x = v.x; this.y = v.y;
+                }
+
+                clone() {
+                    return new Vector2(this.x, this.y);
+                }
+
+                add(v, s = 1.0) {
+                    this.x += v.x * s;
+                    this.y += v.y * s;
+                    return this;
+                }
+
+                addVectors(a, b){
+                    this.x = a.x + b.x;
+                    this.y = a.y + b.y;
+                    return this;
+                }
+
+                subtract(v, s = 1.0) {
+                    this.x -= v.x * s;
+                    this.y -= v.y * s;
+                    return this;
+                }
+
+                subtractVectors(a, b) {
+                    this.x = a.x - b.x;
+                    this.y = a.y - b.y;
+                    return this;
+                }
+
+                length () {
+                    return Math.hypot(this.x, this.y);
+                }
+
+                scale(s) {
+                    this.x *= s;
+                    this.y *= s;
+                }
+                
+                dot(v) {
+                    return this.x * v.x + this.y * v.y;
+                }
+            }
+
+
+            //Scene setup -------
+
+            class Ball {
+                constructor(radius, mass, pos, vel) {
+                    this.radius = radius;
+                    this.mass = mass;
+                    this.pos = pos.clone();
+                    this.vel = vel.clone();
+                }
+
+                simulate(dt, gravity) {
+                    this.vel.add(gravity, dt);
+                    this.pos.add(this.vel, dt);
+                }
+            }
+
+            var physicsScene = {
+                gravity : new Vector2 (0, -10),
+
+                dt : 1.0 / 60.0,
+
+                worldsize : new Vector2(simWidth, simHeight),
+
+                paused : true,
+
+                balls : [], 
+                
+                restitution : 1.0
+            };
+
+            function setupScene() {
+
+                physicsScene.balls = [];
+                var numBalls = 20;
+
+                for (i = 0; i < numBalls; i++){
+                    var radius = 0.05 + Math.random() * 0.1;
+                    var mass = Math.PI * radius * radius;
+                    var pos = new Vector2 (Math.random() * simWidth, Math.random() * simHeight);
+                    var vel = new Vector2 (-1.0 + 2.0 * Math.random(), - 1.0 + 2.0 * Math.random());
+
+                    physicsScene.balls.push(new Ball(radius, mass, pos, vel));
+                }
+            }
+
+
+            // Drawing ---------------
+
+            function getRandomColor() {
+                var letters = '0123456789ABCDEF';
+                var color = '#';
+                for (var i = 0; i < 6; i++) {
+                    color += letters[Math.floor(Math.random() * 16)];
+                }
+                return color;
+            }
+
+
+
+            function draw() {
+                c.clearRect(0, 0, canvas.width, canvas.height);
+
+                c.fillStyle = "#FF0000";
+
+                for (i = 0; i < physicsScene.balls.length; i++) {
+                
+                    var ball = physicsScene.balls[i];
+                    
+                    c.beginPath();
+                    c.arc(
+                        cX(ball.pos), cY(ball.pos), cScale * ball.radius, 0.0, 2.0 * Math.PI
+                    );
+                    c.closePath();
+                    c.fill();
+                }
+            };
+
+            //simulation ----------
+
+            function simulate() {
+                for (i = 0; i < physicsScene.balls.length; i++) {
+                    var ball1 = physicsScene.balls[i];
+                    ball1.simulate(physicsScene.dt, physicsScene.gravity);
+                }
+
+
+                document.getElementById("canvas height").innerHTML = canvas.height;
+                document.getElementById("canvas width").innerHTML = canvas.width;
+                document.getElementById("actual height").innerHTML = simHeight.toFixed(2);
+                document.getElementById("actual width").innerHTML = simWidth.toFixed(2);
+            }
+
+            //make browser to call us repeatedly ------------
+
+            function update() {
+                simulate();
+                draw();
+                requestAnimationFrame(update);
+            }
+
+            setupScene();
+            update();
+
+        </script>
+    </body>
+</html>
