@@ -1,0 +1,127 @@
+<!DOCTYPE html> 
+<html>
+    <head>
+        <title> 1_6 </title>
+    </head>
+
+    <body>
+
+        <!--Displaying cookies-->
+        <button onclick = "run()" class = "button">
+            Run
+        </button>
+ 
+        <button onclick = "restart()" class = "button">
+            Restart / Set Changes
+        </button>
+
+        <br>
+
+        <canvas id = "myCanvas" style = "border: 2px solid" ></canvas>
+
+
+
+        <script>
+
+            // Canvas setup ---------
+
+            var canvas = document.getElementById("myCanvas");
+            var c = canvas.getContext("2d");
+            canvas.width = window.innerWidth - 20;
+            canvas.height = window.innerHeight - 100;
+
+            var simMinWidth = 20.0;
+            var cScale = Math.min(canvas.width, canvas.height) / simMinWidth;
+            var simWidth = canvas.width / cScale;
+            var simHeight = canvas.height / cScale;
+
+            function cX(pos) {
+                return pos.x * cScale;
+            }
+
+            function cY(pos) {
+                return canvas.height - pos.y * cScale;
+            }
+
+            function polarToX(polar) {
+                return polar.r * Math.cos(polar.angle * Math.PI / 180);
+            }
+            function polarToY(polar) {
+                return polar.r * Math.sin(polar.angle * Math.PI / 180);
+            }
+
+
+            //Scene setup -------
+
+            var timeSplit = 1.0 / 120.0;
+
+            var paused = true;
+
+            var gravity = {
+                x : 0,
+                y : -10
+            }
+
+
+
+            //Scene setup -------
+
+            var ball = {
+                radius : 0.2,
+                pos : {x : simWidth/2, y : simHeight* 1/2}
+            };
+
+            var pivot = {
+                radius : 0.1,
+                pos : {x : simWidth/2, y : simHeight* 3/4}
+            };
+
+
+            // Drawing ---------------
+            function draw() {
+                c.clearRect(0, 0, canvas.width, canvas.height);
+
+                c.fillStyle = "#000000";
+                c.beginPath();
+                c.moveTo(cX(pivot.pos), cY(pivot.pos));
+                c.lineTo(cX(ball.pos), cY(ball.pos));
+                c.stroke();
+
+                c.fillStyle = "#FF0000";
+
+                c.beginPath();
+                c.arc(
+                    cX(ball.pos), cY(ball.pos), cScale * ball.radius, 0.0, 2.0 * Math.PI
+                )
+                c.closePath();
+                c.fill();
+                
+
+                c.fillStyle = "#000000";
+                c.beginPath();
+                c.arc(
+                    cX(pivot.pos), cY(pivot.pos), cScale * pivot.radius, 0.0, 2.0 * Math.PI
+                )
+                c.closePath();
+                c.fill();
+            }
+
+            //simulation ----------
+
+            function simulate() {
+
+            }
+
+            //make browser to call us repeatedly ------------
+
+            function update() {
+                simulate();
+                draw();
+                requestAnimationFrame(update);
+            }
+
+            update();
+
+        </script>
+    </body>
+</html>
