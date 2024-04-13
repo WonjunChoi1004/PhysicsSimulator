@@ -7,19 +7,41 @@
     <body>
 
         <!--Displaying cookies-->
-        <button onclick = "run()" class = "button">
+        <button id="start" onclick = "run()" class = "button">
             Run
         </button>
  
         <button onclick = "restart()" class = "button">
-            Restart / Set Changes
+            Reset
         </button>
+
+        <br>
+        <!-- Values -->
+
+        Distance r : <span style = "color:blue; font-weight:bold" id = "r">0</span> <span style="color: blue; font-weight: bold">m</span>
+        <br>    
+
+        <!--Position x : <span style = "color:blue; font-weight:bold" id = "PositionX">0</span> <span style="color: blue; font-weight: bold">m</span>
+
+        <br>
+        //Position y : <span style = "color:blue; font-weight:bold" id = "PositionY">0</span> <span style="color: blue; font-weight: bold">m</span>
+        
+        <br>-->
+        Angle &theta;: <span style = "color:blue; font-weight:bold" id = "angle">0 </span><span style="color: blue; font-weight: bold">&deg;&emsp;&ensp;</span>
+        Angular Velocity &omega;: <span style = "color:blue; font-weight:bold" id = "angvel">0</span> <span style="color: blue; font-weight: bold">&deg;/s&emsp;&ensp;</span>
+        <br>
+        Angular accleration &alpha;: <span style = "color:blue; font-weight:bold" id = "angacc">0</span> <span style="color: blue; font-weight: bold">&deg;/s<sup>2</sup>&emsp;&ensp;</span>
+
+        Time t: <span style = "color:blue; font-weight:bold" id = "time">0</span> <span style="color: blue; font-weight: bold">s</span>
+
+
 
         <br>
 
         <canvas id = "myCanvas" style = "border: 2px solid" ></canvas>
 
 
+        
 
         <script>
 
@@ -44,35 +66,78 @@
             }
 
             function polarToX(polar) {
-                return polar.r * Math.cos(polar.angle * Math.PI / 180);
+                return polar.r * Math.sin(polar.angle);
             }
             function polarToY(polar) {
-                return polar.r * Math.sin(polar.angle * Math.PI / 180);
+                return polar.r * Math.cos(polar.angle);
             }
+
+            class Vector {
+		        constructor(x = 0, y = 0) { this.x = x; this.y = y; }
+		        copy(v)   { 
+		        	return new Vector(this.x, this.y); 
+		        }
+		        assign(v) { 
+		        	this.x = v.x; this.y = v.y; 
+		        }
+		        plus(v) { 
+		        	return new Vector(this.x + v.x, this.y + v.y); 
+		        }
+		        minus(v) { 
+		        	return new Vector(this.x - v.x, this.y - v.y); 
+		        }
+		        add(v, s = 1) { 
+		        	this.x += v.x * s; this.y += v.y * s; 
+		        }
+		        scale(s) {
+		        	this.x *= s; this.y *= s; 
+		        }
+		        dot(v) { 
+		        	return this.x * v.x + this.y * v.y; 
+		        }
+		        normalize() {
+		        	var d = Math.sqrt(this.x * this.x + this.y * this.y);		
+		        	if (d > 0) { this.x /= d; this.y /= d; } else this.x = 1;
+		        	return d;
+		        }
+		        lenSquared() { 
+		        	return this.x * this.x + this.y * this.y; 
+		        }
+		        distSquared(v) { 
+		        	return (this.x - v.x) * (this.x - v.x) + (this.y - v.y) * (this.y - v.y);
+		        }
+	        }
+
+
 
 
             //Scene setup -------
 
-            var timeSplit = 1.0 / 120.0;
-
-            var paused = true;
-
-            var gravity = {
-                x : 0,
-                y : -10
-            }
+            var physicsScene = {
+                gravity : {
+                    x : 0,
+                    y : 10
+                },
+		        dt : 1.0 / 30.0,
+		        paused: true,
+		        time : 0
+	        };
 
 
 
             //Scene setup -------
 
             var ball = {
-                radius : 0.2,
-                pos : {x : simWidth/2, y : simHeight* 1/2}
+                radius : 0.7,
+                pos : {x : simWidth/2, y : simHeight* 1/2},
+                angle : 0,
+                angvel : 0,
+                angacc : 0,
+                r : simHeight/4
             };
 
             var pivot = {
-                radius : 0.1,
+                radius : 0.3,
                 pos : {x : simWidth/2, y : simHeight* 3/4}
             };
 
@@ -109,18 +174,123 @@
             //simulation ----------
 
             function simulate() {
+                ball.r  = Math.hypot((ball.pos.y - pivot.pos.y), (ball.pos.x - pivot.pos.x));
+                ball.angle = - Math.atan((ball.pos.x - pivot.pos.x)/(ball.pos.y - pivot.pos.y));
+                if (ball.pos.y > pivot.pos.y) {
+                    ball.angle = Math.PI + ball.angle;
+                    if (ball.angle > Math.PI) {
+                        ball.angle -= 2 * Math.PI;
+                    }
+                }
 
+                
+                ball.angacc = -physicsScene.gravity.y / ball.r * Math.sin(ball.angle);
+
+                ball.angvel = ball.angvel + ball.angacc * physicsScene.dt;
+                ball.angle = ball.angle + ball.angvel * physicsScene.dt;
+
+                
+                physicsScene.time += physicsScene.dt;
+
+                ball.pos.x = polarToX(ball) + pivot.pos.x;
+                ball.pos.y = -polarToY(ball) + pivot.pos.y;
             }
 
             //make browser to call us repeatedly ------------
 
             function update() {
+                if (!physicsScene.paused) {
                 simulate();
+                }
                 draw();
                 requestAnimationFrame(update);
+                
+                document.getElementById("r").innerHTML = ball.r.toFixed(2);
+                document.getElementById("angle").innerHTML = Math.round((ball.angle) * 180/Math.PI);
+                document.getElementById("angvel").innerHTML = ball.angvel.toFixed(2)
+                document.getElementById("angacc").innerHTML = ball.angacc.toFixed(2)
+
+                //document.getElementById("PositionX").innerHTML = (ball.pos.x - pivot.pos.x).toFixed(2);
+                //document.getElementById("PositionY").innerHTML = (ball.pos.y - pivot.pos.y).toFixed(2);
+
+                document.getElementById("time").innerHTML = physicsScene.time.toFixed(2)
+            }
+
+
+            function run() {
+                var button = document.getElementById('start');
+				if (!physicsScene.paused) {
+					button.innerHTML = "Run";
+                    physicsScene.paused = true;
+                }
+				else {
+					button.innerHTML = "Stop";
+                    physicsScene.paused = false;
+                }
+            }
+
+            function restart() {
+                var button = document.getElementById('start');
+                button.innerHTML = "Run";
+                physicsScene.paused = true;
+                init();
+            }
+
+            function init() {
+                ball.radius = 0.7,
+                ball.pos.x = simWidth/2; 
+                ball.pos.y = simHeight* 1/2;
+                ball.angvel = 0;
+                physicsScene.time = 0;
             }
 
             update();
+
+            // mouse grab----------------------------
+	
+	        var grabPointNr = -1;
+	        var grabPoint = { pos : new Vector(), invMass : 0, vel : new Vector() };
+		
+	        function onMouse(evt) {
+		        evt.preventDefault();
+		        var rect = canvas.getBoundingClientRect();	
+		        var mousePos ={
+			        x: (evt.clientX - rect.left) / cScale, 
+			        y : -(evt.clientY - rect.bottom) / cScale};
+
+		        if (evt.type == "mousedown") {
+			        ball.pos.x = mousePos.x;
+                    ball.pos.y = mousePos.y;
+
+                    if (grabPointNr == 1){
+                        grabPointNr = -1
+                    } else {
+                        grabPointNr = 1}
+                    
+                    ball.r  = Math.hypot((ball.pos.y - pivot.pos.y), (ball.pos.x - pivot.pos.x));
+                    ball.angle = - Math.atan((ball.pos.x - pivot.pos.x)/(ball.pos.y - pivot.pos.y));
+                    if (ball.pos.y > pivot.pos.y) {
+                        ball.angle = Math.PI + ball.angle;
+                        if (ball.angle > Math.PI) {
+                            ball.angle -= 2 * Math.PI;
+                        }
+                    }   
+
+                ball.angacc = -physicsScene.gravity.y / ball.r * Math.sin(ball.angle);
+		        }
+		        else if (evt.type == "mousemove" && grabPointNr == 1) {
+			        //ball.pos.x = mousePos.x;
+                    //ball.pos.y = mousePos.y;
+		        }
+                
+		        else if (evt.type == "mouseup" || evt.type == "mouseout") {
+		        }
+	        }
+	
+	        canvas.addEventListener("mousedown", onMouse);
+	        canvas.addEventListener("mousemove", onMouse);
+	        canvas.addEventListener("mouseup", onMouse);
+	        canvas.addEventListener("mouseout", onMouse);
 
         </script>
     </body>
