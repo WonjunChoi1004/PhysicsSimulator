@@ -21,12 +21,12 @@
         Distance r : <span style = "color:blue; font-weight:bold" id = "r">0</span> <span style="color: blue; font-weight: bold">m</span>
         <br>    
 
-        <!--Position x : <span style = "color:blue; font-weight:bold" id = "PositionX">0</span> <span style="color: blue; font-weight: bold">m</span>
+        Position x : <span style = "color:blue; font-weight:bold" id = "PositionX">0</span> <span style="color: blue; font-weight: bold">m</span>
 
         <br>
-        //Position y : <span style = "color:blue; font-weight:bold" id = "PositionY">0</span> <span style="color: blue; font-weight: bold">m</span>
+        Position y : <span style = "color:blue; font-weight:bold" id = "PositionY">0</span> <span style="color: blue; font-weight: bold">m</span>
         
-        <br>-->
+        <br>
         Angle &theta;: <span style = "color:blue; font-weight:bold" id = "angle">0 </span><span style="color: blue; font-weight: bold">&deg;&emsp;&ensp;</span>
         Angular Velocity &omega;: <span style = "color:blue; font-weight:bold" id = "angvel">0</span> <span style="color: blue; font-weight: bold">&deg;/s&emsp;&ensp;</span>
         <br>
@@ -178,8 +178,8 @@
                 document.getElementById("angvel").innerHTML = ball.angvel.toFixed(2)
                 document.getElementById("angacc").innerHTML = ball.angacc.toFixed(2)
 
-                //document.getElementById("PositionX").innerHTML = (ball.pos.x - pivot.pos.x).toFixed(2);
-                //document.getElementById("PositionY").innerHTML = (ball.pos.y - pivot.pos.y).toFixed(2);
+                document.getElementById("PositionX").innerHTML = (ball.pos.x - pivot.pos.x).toFixed(2);
+                document.getElementById("PositionY").innerHTML = (ball.pos.y - pivot.pos.y).toFixed(2);
 
                 document.getElementById("time").innerHTML = physicsScene.time.toFixed(2)
             }
@@ -247,8 +247,8 @@
                 ball.angacc = -physicsScene.gravity.y / ball.r * Math.sin(ball.angle);
 		        }
 		        else if (evt.type == "mousemove" && grabPointNr == 1) {
-			        //ball.pos.x = mousePos.x;
-                    //ball.pos.y = mousePos.y;
+			        ball.pos.x = mousePos.x;
+                    ball.pos.y = mousePos.y;
 		        }
                 
 		        else if (evt.type == "mouseup" || evt.type == "mouseout") {
